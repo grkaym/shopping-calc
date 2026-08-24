@@ -2,6 +2,8 @@
 
 商品の値段を入力し、買い物の合計金額を計算するシンプルなWebアプリです。
 
+https://grkaym.github.io/shopping-calc/
+
 ## 機能
 
 - 商品価格の追加

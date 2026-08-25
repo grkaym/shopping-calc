@@ -111,7 +111,8 @@ h1 {
   font-weight: 700;
 }
 
-.money-input {
+.money-input,
+.quantity-input {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -126,23 +127,34 @@ h1 {
   padding: 0 18px;
 }
 
-.money-input:focus-within {
+.money-input:focus-within,
+.quantity-input:focus-within {
   border-color: #111827;
   box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
 }
 
-.money-input span {
+.money-input span,
+.quantity-input span {
   color: #64748b;
   font-weight: 700;
 }
 
-.money-input input {
+.money-input input,
+.quantity-input input {
   width: 100%;
   min-width: 0;
   border: 0;
   outline: 0;
   padding: 14px 0;
   background: transparent;
+}
+
+.quantity-input {
+  padding-right: 10px;
+}
+
+.quantity-input input {
+  text-align: right;
 }
 
 .money-input--large input {
@@ -235,8 +247,17 @@ h1 {
 
 .input-row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) 96px auto;
+  align-items: end;
   gap: 10px;
+}
+
+.input-field {
+  min-width: 0;
+}
+
+.input-row__button {
+  align-self: end;
 }
 
 .items-section {
@@ -275,10 +296,13 @@ h1 {
 }
 
 .item__price {
+  min-width: 0;
   font-weight: 700;
+  line-height: 1.45;
 }
 
 .item__delete {
+  flex: 0 0 auto;
   border: 0;
   border-radius: 10px;
   padding: 7px 10px;
@@ -335,7 +359,12 @@ h1 {
   }
 
   .input-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) 88px;
+  }
+
+  .input-row__button {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .shopping-header {

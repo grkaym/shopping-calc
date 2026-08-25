@@ -9,6 +9,7 @@ const restartButton = document.querySelector('#restart-button');
 
 const priceForm = document.querySelector('#price-form');
 const priceInput = document.querySelector('#price');
+const quantityInput = document.querySelector('#quantity');
 const errorMessage = document.querySelector('#error-message');
 const itemList = document.querySelector('#item-list');
 const emptyMessage = document.querySelector('#empty-message');
@@ -23,7 +24,7 @@ const yenFormatter = new Intl.NumberFormat('ja-JP', {
 });
 
 let budget = 0;
-let prices = [];
+let items = [];
 
 function showView(viewName) {
   const isStartView = viewName === 'start';
@@ -40,21 +41,27 @@ function showView(viewName) {
 function render() {
   itemList.replaceChildren();
 
-  prices.forEach((price, index) => {
+  items.forEach((itemData, index) => {
+    const { price, quantity } = itemData;
+    const subtotal = price * quantity;
+
     const item = document.createElement('li');
     item.className = 'item';
 
     const label = document.createElement('span');
     label.className = 'item__price';
-    label.textContent = `${index + 1}. ${yenFormatter.format(price)}`;
+    label.textContent = `${index + 1}. ${yenFormatter.format(price)} × ${quantity} = ${yenFormatter.format(subtotal)}`;
 
     const deleteButton = document.createElement('button');
     deleteButton.className = 'item__delete';
     deleteButton.type = 'button';
     deleteButton.textContent = '削除';
-    deleteButton.setAttribute('aria-label', `${yenFormatter.format(price)}の商品を削除`);
+    deleteButton.setAttribute(
+      'aria-label',
+      `${yenFormatter.format(price)}の商品${quantity}個を削除`,
+    );
     deleteButton.addEventListener('click', () => {
-      prices.splice(index, 1);
+      items.splice(index, 1);
       render();
     });
 
@@ -62,16 +69,23 @@ function render() {
     itemList.append(item);
   });
 
-  const total = prices.reduce((sum, price) => sum + price, 0);
+  const total = items.reduce(
+    (sum, itemData) => sum + itemData.price * itemData.quantity,
+    0,
+  );
+  const totalCount = items.reduce(
+    (sum, itemData) => sum + itemData.quantity,
+    0,
+  );
   const remaining = budget - total;
 
   budgetPrice.textContent = yenFormatter.format(budget);
   totalPrice.textContent = yenFormatter.format(total);
   remainingPrice.textContent = yenFormatter.format(remaining);
   remainingPrice.classList.toggle('is-over-budget', remaining < 0);
-  itemCount.textContent = `${prices.length}点`;
+  itemCount.textContent = `${totalCount}点`;
 
-  const hasItems = prices.length > 0;
+  const hasItems = items.length > 0;
   emptyMessage.hidden = hasItems;
   clearButton.hidden = !hasItems;
 }
@@ -88,7 +102,7 @@ budgetForm.addEventListener('submit', (event) => {
   }
 
   budget = value;
-  prices = [];
+  items = [];
   budgetError.textContent = '';
   render();
   showView('shopping');
@@ -97,15 +111,22 @@ budgetForm.addEventListener('submit', (event) => {
 priceForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
-  const value = Number(priceInput.value);
+  const price = Number(priceInput.value);
+  const quantity = Number(quantityInput.value);
 
-  if (!Number.isFinite(value) || value < 0 || !Number.isInteger(value)) {
-    errorMessage.textContent = '0円以上の整数を入力してください。';
+  if (!Number.isFinite(price) || price < 0 || !Number.isInteger(price)) {
+    errorMessage.textContent = '値段は0円以上の整数を入力してください。';
     priceInput.focus();
     return;
   }
 
-  prices.push(value);
+  if (!Number.isFinite(quantity) || quantity < 1 || !Number.isInteger(quantity)) {
+    errorMessage.textContent = '個数は1個以上の整数を入力してください。';
+    quantityInput.focus();
+    return;
+  }
+
+  items.push({ price, quantity });
   errorMessage.textContent = '';
   priceForm.reset();
   render();
@@ -113,7 +134,7 @@ priceForm.addEventListener('submit', (event) => {
 });
 
 clearButton.addEventListener('click', () => {
-  prices = [];
+  items = [];
   render();
   priceInput.focus();
 });
@@ -129,6 +150,10 @@ budgetInput.addEventListener('input', () => {
 });
 
 priceInput.addEventListener('input', () => {
+  errorMessage.textContent = '';
+});
+
+quantityInput.addEventListener('input', () => {
   errorMessage.textContent = '';
 });
 

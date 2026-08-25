@@ -56,22 +56,42 @@
       </section>
 
       <form id="price-form" class="price-form">
-        <label for="price">商品の値段</label>
         <div class="input-row">
-          <div class="money-input">
-            <span aria-hidden="true">¥</span>
-            <input
-              id="price"
-              name="price"
-              type="number"
-              min="0"
-              step="1"
-              inputmode="numeric"
-              placeholder="例: 980"
-              required
-            >
+          <div class="input-field">
+            <label for="price">商品の値段</label>
+            <div class="money-input">
+              <span aria-hidden="true">¥</span>
+              <input
+                id="price"
+                name="price"
+                type="number"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                placeholder="例: 980"
+                required
+              >
+            </div>
           </div>
-          <button class="primary-button" type="submit">追加</button>
+
+          <div class="input-field input-field--quantity">
+            <label for="quantity">個数</label>
+            <div class="quantity-input">
+              <input
+                id="quantity"
+                name="quantity"
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                value="1"
+                required
+              >
+              <span aria-hidden="true">個</span>
+            </div>
+          </div>
+
+          <button class="primary-button input-row__button" type="submit">追加</button>
         </div>
         <p id="error-message" class="error-message" aria-live="polite"></p>
       </form>

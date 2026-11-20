@@ -106,9 +106,16 @@
       </section>
 
       <section class="total-card" aria-label="合計金額">
-        <span>合計</span>
+        <div class="total-card__heading">
+          <span id="total-label">合計</span>
+          <button id="discount-toggle" class="discount-toggle" type="button" role="switch" aria-checked="false" aria-describedby="discount-note">
+            5%引き
+            <span class="discount-toggle__track" aria-hidden="true"></span>
+          </button>
+        </div>
         <strong id="total-price">¥0</strong>
         <small id="item-count">0点</small>
+        <small id="discount-note" class="total-card__note">割引後の1円未満は切り捨て</small>
       </section>
     </section>
   </main>

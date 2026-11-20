@@ -16,6 +16,8 @@ const emptyMessage = document.querySelector('#empty-message');
 const totalPrice = document.querySelector('#total-price');
 const itemCount = document.querySelector('#item-count');
 const clearButton = document.querySelector('#clear-button');
+const discountToggle = document.querySelector('#discount-toggle');
+const totalLabel = document.querySelector('#total-label');
 
 const yenFormatter = new Intl.NumberFormat('ja-JP', {
   style: 'currency',
@@ -25,6 +27,7 @@ const yenFormatter = new Intl.NumberFormat('ja-JP', {
 
 let budget = 0;
 let items = [];
+let discountEnabled = false;
 
 function showView(viewName) {
   const isStartView = viewName === 'start';
@@ -69,10 +72,11 @@ function render() {
     itemList.append(item);
   });
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (sum, itemData) => sum + itemData.price * itemData.quantity,
     0,
   );
+  const total = discountEnabled ? Math.floor(subtotal * 95 / 100) : subtotal;
   const totalCount = items.reduce(
     (sum, itemData) => sum + itemData.quantity,
     0,
@@ -81,6 +85,8 @@ function render() {
 
   budgetPrice.textContent = yenFormatter.format(budget);
   totalPrice.textContent = yenFormatter.format(total);
+  totalLabel.textContent = discountEnabled ? '合計（5%引き）' : '合計';
+  discountToggle.setAttribute('aria-checked', String(discountEnabled));
   remainingPrice.textContent = yenFormatter.format(remaining);
   remainingPrice.classList.toggle('is-over-budget', remaining < 0);
   itemCount.textContent = `${totalCount}点`;
@@ -103,6 +109,7 @@ budgetForm.addEventListener('submit', (event) => {
 
   budget = value;
   items = [];
+  discountEnabled = false;
   budgetError.textContent = '';
   render();
   showView('shopping');
@@ -131,6 +138,11 @@ priceForm.addEventListener('submit', (event) => {
   priceForm.reset();
   render();
   priceInput.focus();
+});
+
+discountToggle.addEventListener('click', () => {
+  discountEnabled = !discountEnabled;
+  render();
 });
 
 clearButton.addEventListener('click', () => {
